@@ -3,8 +3,8 @@
 #
 
 
-RSYNC=/usr/bin/rsync
-LOCAL=/zfs/lodewijk/Programming/WaterMeter/
+RSYNC=/opt/local/bin/rsync
+LOCAL=/zfs/lodewijk/Programming/HomeAutomation/WaterMeter/
 REMOTE=pi@waterpi.lan:/home/pi/Programming/WaterMeter/
 FLAGS="--stats --progress"
 
