@@ -50,10 +50,12 @@ def insertValue(table,ts,val):
     try:
         cur.execute(query,(ts,val))
         # db.query(sql)
-        #print sql
-    except Exception:
-        # print "Constraints violation on "+sql
-        pass
+    except psycopg2.Error as e:
+        print(query, (ts, val))
+        # Handle specific PostgreSQL errors if needed
+        # For now, print a generic error message
+        print("Error inserting data into table:", table)
+        print("Error:", e)
 
 
 def processFile(filename):
