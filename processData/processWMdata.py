@@ -18,7 +18,7 @@ try:
     )
     cur = conn.cursor()
 except Exception:
-    print "Error accessing database"
+    print("Error accessing database")
     sys.exit()
 
 def createDBtables():
@@ -88,7 +88,6 @@ for f in sorted(os.listdir(basedir)):
                 processFile(filename)
             else:
                 print(f"File too small : skipping {filename}")
-
             # now rename the file so we don't process it again
             print(filename,newfile)
             os.rename(filename,newfile)

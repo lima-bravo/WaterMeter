@@ -5,7 +5,7 @@
 #
 BASEDIR=/home/pi/Programming/WaterMeter/readWM/
 TEEFILE="readWM.log"
-COMMAND="/usr/bin/python -u ./readWaterMeter.py"
+COMMAND="/usr/bin/python3 -u ./readWaterMeter.py"
 RUNNING=-1
 
 checkIfRunning() {
