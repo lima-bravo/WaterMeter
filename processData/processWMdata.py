@@ -3,10 +3,20 @@
 # This script processes the Watermeter data and uploads
 #
 import os, sys
-from pg import DB
+import psycopg2
+from psycopg2 import sql
 
 try:
-    db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
+    # db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
+    # Connect to the PostgreSQL database
+    conn = psycopg2.connect(
+        host="localhost",
+        port="5432",
+        dbname="netatmo",
+        user="netatmo",
+        password="netatmo"
+    )
+    cur = conn.cursor()
 except Exception:
     print "Error accessing database"
     sys.exit()
@@ -19,10 +29,14 @@ def createDBtables():
         #query="DROP TABLE %s" % (d)
         #db.query(query)
         #
-        query="CREATE TABLE IF NOT EXISTS "+d
-        query+=" (ts timestamp PRIMARY KEY UNIQUE, val NUMERIC(10,4))"
-        print query
-        db.query(query)
+        query= sql.SQL("""
+            CREATE TABLE IF NOT EXISTS {} (
+                ts timestamp PRIMARY KEY UNIQUE, 
+                val NUMERIC(10,4)
+            )
+        """).format(sql.Identifier(d))
+        print(query)
+        cur.execute(query)
         # now create the index -- not needed, primary key added
         # query="CREATE INDEX IF NOT EXISTS %s_idx_ts ON %s (ts)" % (d,d)
         # print query
@@ -30,9 +44,12 @@ def createDBtables():
 
 
 def insertValue(table,ts,val):
-    sql="INSERT INTO %s VALUES(to_timestamp(%.3f),%s)" % (table,ts,val)
+    query=sql.SQL("""
+        INSERT INTO {} VALUES(to_timestamp(%.3f),%s)
+        """).format(sql.Identifier(table))
     try:
-        db.query(sql)
+        cur.execute(query,(ts,val))
+        # db.query(sql)
         #print sql
     except Exception:
         # print "Constraints violation on "+sql
@@ -40,7 +57,7 @@ def insertValue(table,ts,val):
 
 
 def processFile(filename):
-    print filename
+    print(filename)
     f=open(filename,'r')
     line=f.readline()
     # now enter the loop
@@ -64,19 +81,19 @@ for f in sorted(os.listdir(basedir)):
         newfile=filename.replace("wmdata","wmproc")
         # check if the newfile exists, if so, skip
         if os.path.isfile(newfile):
-            print "Skipping "+filename
+            print(f"Skipping {filename}")
         else:
             # check if the filesize is greater than 18 bytes, this includes the single value measures.
             if os.path.getsize(filename)>18:
                 processFile(filename)
             else:
-                print "File too small : skipping "+filename
+                print(f"File too small : skipping {filename}")
 
             # now rename the file so we don't process it again
-            print filename,newfile
+            print(filename,newfile)
             os.rename(filename,newfile)
 
 
 
 db.close()
-print "Done"
+print("Done")
