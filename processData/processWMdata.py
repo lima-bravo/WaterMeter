@@ -94,5 +94,9 @@ for f in sorted(os.listdir(basedir)):
 
 
 
-db.close()
+# db.close()
+conn.commit()
+cur.close()
+conn.close()
+#
 print("Done")
