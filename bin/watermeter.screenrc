@@ -2,4 +2,4 @@ screensession WaterPi
 screen  -t readWM /home/pi/Programming/WaterMeter/bin/readWM.sh
 screen  -t uploadData /home/pi/Programming/WaterMeter/processData/uploadData.sh
 # screen  -t networklog /home/pi/Programming/WaterMeter/bin/resetNetwork.sh
-
+screen -t backup /home/pi/Programming/Scripts/bin/backupUtilPi.sh
