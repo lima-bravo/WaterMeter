@@ -10,11 +10,11 @@ try:
     # db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
     # Connect to the PostgreSQL database
     conn = psycopg2.connect(
-        host="localhost",
+        host="imac.lan",
         port="5432",
-        dbname="netatmo",
-        user="netatmo",
-        password="netatmo"
+        dbname="sensordata",
+        user="sensor_main",
+        password="SuperSensor"
     )
     cur = conn.cursor()
 except Exception:
