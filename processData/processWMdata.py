@@ -17,8 +17,10 @@ try:
         password="SuperSensor"
     )
     cur = conn.cursor()
-except Exception:
-    print("Error accessing database")
+except psycopg2.Error as e:
+    # Handle specific PostgreSQL errors if needed
+    # For now, print a generic error message
+    print("Error connecting to the database:", e)
     sys.exit()
 
 def createDBtables():
@@ -45,10 +47,11 @@ def createDBtables():
 
 def insertValue(table,ts,val):
     query=sql.SQL("""
-        INSERT INTO {} VALUES(to_timestamp(%f),%s)
+        INSERT INTO {} VALUES(to_timestamp(%s),%s)
         """).format(sql.Identifier(table))
     try:
-        cur.execute(query,(ts,val))
+        ts_rounded = round(ts, 3)
+        cur.execute(query,(ts_rounded,val))
         # db.query(sql)
     except psycopg2.Error as e:
         print(query, (ts, val))
