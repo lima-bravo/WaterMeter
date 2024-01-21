@@ -6,9 +6,14 @@
 # of the watermeter at startup. This value is saved regularly to accomodate
 # for power-outages.
 #
+# 20240121-174619 : updated script to use Python3
+#
 import RPi.GPIO as GPIO
-import os, sys, stat, traceback
-import time, datetime
+import os
+import sys
+import traceback
+import time
+import datetime
 
 
 # Setup the detection loop
@@ -28,7 +33,7 @@ def readStartValue():
             # check if the filesize is greater than 0
             if os.stat(file).st_size>9:
                 if file>targetfile:
-                    print "Targetfile %s" % targetfile
+                    print("Targetfile %s" % targetfile)
                     targetfile=file
             # print(os.path.join("./", file), targetfile)
     try:
@@ -46,18 +51,18 @@ def readStartValue():
             updateWM0(date,value)
 
     except:
-        print "Error opening file with data"
+        print("Error opening file with data")
         traceback.print_exc(file=sys.stdout)
         sys.exit()
 
-    print "readStartValue %.4f" % float(watermeter/1000.0)
+    print("readStartValue %.4f" % float(watermeter/1000.0))
     return watermeter
 
 def writeValue(file,val):
         # write the value to the open file
         timestamp=time.time()
         f.write("%.3f %.4f\n" % (timestamp, val/1000.0))
-        print "[%.3f] Tick detected %.04f" % (timestamp,float(watermeter/1000.0))
+        print("[%.3f] Tick detected %.04f" % (timestamp,float(watermeter/1000.0)))
 
 correctionCounter=0
 correctionFile="wmdata.correct"
@@ -74,9 +79,9 @@ def readCorrectionValue(watermeter):
                 watermeter=int(float(value)*1000)
                 f.close()
                 os.remove(correctionFile)
-                print "Corrected watermeter to",watermeter
+                print("Corrected watermeter to",watermeter)
             except:
-                print "Error opening file with data"
+                print("Error opening file with data")
                 traceback.print_exc(file=sys.stdout)
                 sys.exit()
 
@@ -179,7 +184,7 @@ try:
 
             # print "cS %d pS %d  on %d off %d" % (currentState,previousState, deltaOn, deltaOff)
             if currentState!=previousState:
-                print "[%.3f] pin %d count %d cycles %d" % (time.time(), currentState, measurement_counter, cycleCount)
+                print("[%.3f] pin %d count %d cycles %d" % (time.time(), currentState, measurement_counter, cycleCount))
 
                 # print "stateChange %d" % (currentState)
                 # only measure when we have seen a change in state
@@ -223,7 +228,7 @@ try:
                 if (measurement_counter>1000):
                     if (cycleCount)>10000:
                         # it's been a while since the last tick, now process the file
-                        print "[%.3f] Saving file - count %d cycles %d" % ( time.time(),  measurement_counter, cycleCount)
+                        print("[%.3f] Saving file - count %d cycles %d" % ( time.time(),  measurement_counter, cycleCount))
                         thisFile=False
 
                 #
@@ -243,15 +248,15 @@ try:
         ## now make a new file
 
 except KeyboardInterrupt:
-    print "Control-C detected"
+    print("Control-C detected")
     f.close()
     moveFile(filename)
     timestamp=int(time.time())
     updateWM0(timestamp,float(watermeter/1000.0))
 except:
-    print "Other error detected"
+    print("Other error detected")
     traceback.print_exc(file=sys.stdout)
 
 finally:
     GPIO.cleanup()
-    print "...exiting"
+    print("...exiting")
