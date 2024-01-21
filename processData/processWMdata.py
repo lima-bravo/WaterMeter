@@ -8,7 +8,7 @@ from pg import DB
 try:
     db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
 except Exception:
-    print "Error accessing database"
+    print("Error accessing database")
     sys.exit()
 
 def createDBtables():
@@ -21,7 +21,7 @@ def createDBtables():
         #
         query="CREATE TABLE IF NOT EXISTS "+d
         query+=" (ts timestamp PRIMARY KEY UNIQUE, val NUMERIC(10,4))"
-        print query
+        print(query)
         db.query(query)
         # now create the index -- not needed, primary key added
         # query="CREATE INDEX IF NOT EXISTS %s_idx_ts ON %s (ts)" % (d,d)
@@ -40,7 +40,7 @@ def insertValue(table,ts,val):
 
 
 def processFile(filename):
-    print filename
+    print(filename)
     f=open(filename,'r')
     line=f.readline()
     # now enter the loop
