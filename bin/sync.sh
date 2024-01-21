@@ -5,7 +5,7 @@
 
 RSYNC=/opt/local/bin/rsync
 LOCAL=/zfs/lodewijk/Programming/HomeAutomation/WaterMeter/
-REMOTE=pi@waterpi.lan:/home/pi/Programming/WaterMeter/
+REMOTE=pi@192.168.0.62:/home/pi/Programming/WaterMeter/
 FLAGS="--stats --progress"
 
 
