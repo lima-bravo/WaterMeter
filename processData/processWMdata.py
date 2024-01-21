@@ -64,19 +64,19 @@ for f in sorted(os.listdir(basedir)):
         newfile=filename.replace("wmdata","wmproc")
         # check if the newfile exists, if so, skip
         if os.path.isfile(newfile):
-            print "Skipping "+filename
+            print("Skipping "+filename)
         else:
             # check if the filesize is greater than 18 bytes, this includes the single value measures.
             if os.path.getsize(filename)>18:
                 processFile(filename)
             else:
-                print "File too small : skipping "+filename
+                print("File too small : skipping "+filename)
 
             # now rename the file so we don't process it again
-            print filename,newfile
+            print( filename,newfile)
             os.rename(filename,newfile)
 
 
 
 db.close()
-print "Done"
+print("Done")

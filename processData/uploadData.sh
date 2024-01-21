@@ -23,7 +23,7 @@ while [ 1 ]; do
         if [ ${LSCNT} -gt 0 ]; then
 		echo ""
                 sleep 5 # to prevent race condition of processing a file still being moved
-                python /home/pi/Programming/WaterMeter/processData/processWMdata.py
+                python3 /home/pi/Programming/WaterMeter/processData/processWMdata.py
                 if [ $? -eq 0 ]; then
                         echo success
                 fi
