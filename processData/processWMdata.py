@@ -45,7 +45,7 @@ def createDBtables():
 
 def insertValue(table,ts,val):
     query=sql.SQL("""
-        INSERT INTO {} VALUES(to_timestamp(%.3f),%s)
+        INSERT INTO {} VALUES(to_timestamp(%f),%s)
         """).format(sql.Identifier(table))
     try:
         cur.execute(query,(ts,val))
