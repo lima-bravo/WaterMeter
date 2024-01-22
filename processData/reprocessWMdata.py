@@ -6,6 +6,11 @@ import os, sys
 import psycopg2
 from psycopg2 import sql
 
+# Global variables
+Add=0
+Tot=0
+#
+
 try:
     # db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
     # Connect to the PostgreSQL database
@@ -23,47 +28,27 @@ except psycopg2.Error as e:
     print("Error connecting to the database:", e)
     sys.exit()
 
-def createDBtables():
-    datatables=['water']
-    # now create the datatables
-    for d in datatables:
-        # drop table for now
-        #query="DROP TABLE %s" % (d)
-        #db.query(query)
-        #
-        query= sql.SQL("""
-            CREATE TABLE IF NOT EXISTS {} (
-                ts timestamp PRIMARY KEY UNIQUE, 
-                val NUMERIC(10,4)
-            )
-        """).format(sql.Identifier(d))
-        print(query)
-        cur.execute(query)
-        # now create the index -- not needed, primary key added
-        # query="CREATE INDEX IF NOT EXISTS %s_idx_ts ON %s (ts)" % (d,d)
-        # print query
-        # db.query(query)
 
 
 def insertValue(table,ts,val):
+    global Add, Tot
     query=sql.SQL("""
         INSERT INTO {} VALUES(to_timestamp(%s),%s)
         ON CONFLICT (ts) DO NOTHING
         """).format(sql.Identifier(table))
     try:
+        Tot+=1
         ts_rounded = round(ts, 3)
         cur.execute(query,(ts_rounded,val))
-        # db.query(sql)
+        if cur.rowcount > 0:  # something was inserted into the database
+            Add += cur.rowcount
     except psycopg2.Error as e:
         print(query, (ts, val))
-        # Handle specific PostgreSQL errors if needed
-        # For now, print a generic error message
-        print("Error inserting data into table:", table)
         print("Error:", e)
 
 
 def processFile(filename):
-    print(filename)
+    # print(filename)
     f=open(filename,'r')
     line=f.readline()
     # now enter the loop
@@ -78,25 +63,21 @@ def processFile(filename):
 
 
 ## now let's start processing the directory and process all the rec files.
-basedir="/home/pi/Programming/WaterMeter/data/"
-#createDBtables()
-for f in sorted(os.listdir(basedir)):
-    if f.startswith("wmdata."):
+basedir="/zfs/lodewijk/Programming/HomeAutomation/WaterMeter/data/"
+fileset = os.listdir(basedir)
+fileset.sort()
+for f in fileset:
+    if f.startswith("wm"):
         # processRecFile(basedir+f)
         filename=os.path.join(basedir,f)
-        newfile=filename.replace("wmdata","wmproc")
+        Add = 0
+        Tot = 0
         # check if the newfile exists, if so, skip
-        if os.path.isfile(newfile):
-            print(f"Skipping {filename}")
-        else:
-            # check if the filesize is greater than 18 bytes, this includes the single value measures.
-            if os.path.getsize(filename)>18:
-                processFile(filename)
-            else:
-                print(f"File too small : skipping {filename}")
-            # now rename the file so we don't process it again
-            print(filename,newfile)
-            os.rename(filename,newfile)
+        processFile(filename)
+        if Add > 0:
+            print(f"{filename} - Total {Tot} , Added {Add}")
+            # conn.commit()  # commit the transaction
+            cur.connection.commit()
 
 
 
