@@ -88,7 +88,7 @@ def readCorrectionValue(watermeter):
     return watermeter
 
 def updateWM0(date,value):
-    f=open("wmdata.0","w", buffering=0) # unbuffered output to not lose data
+    f=open("wmdata.0","w", buffering=1)  # line buffered output
     f.write("%s %s" % (date,value))
     f.close()
 
@@ -124,7 +124,7 @@ try:
         # create new file for saving data
         filename="wmdata."+str(int(time.time()))
         # now open the file ready for writing, in unbuffered mode!
-        f = open(filename,"w", buffering=0) # unbuffered
+        f = open(filename,"w", buffering=1)  # line buffered
         #
         # Start taking measurements for 1000 times
         measurement_counter=0
