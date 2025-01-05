@@ -10,7 +10,7 @@ try:
     # db = DB(dbname='sensordata', host='imac.lan', port=5432, user='sensor_main', passwd='SuperSensor')
     # Connect to the PostgreSQL database
     conn = psycopg2.connect(
-        host="imac.lan",
+        host="postgres",
         port="5432",
         dbname="sensordata",
         user="sensor_main",
